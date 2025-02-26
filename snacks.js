@@ -34,3 +34,26 @@ function getPost(id) {
 getPost(1)
     .then(post => console.log(post))
     .catch(error => console.error(error))
+
+
+//SNACK 2
+//Crea la funzione lanciaDado()
+function lanciaDado() {
+    return new Promise((resolve, reject) => {
+        console.log("Sto lanciando il dado...")
+        setTimeout(() => {
+            const incastro = Math.random() < 0.2
+            console.log(incastro)
+            if (incastro) {
+                reject("Il dado si è incastrato")
+            } else {
+                const valore = Math.floor(Math.random() * 6) + 1
+                resolve(`E' uscito ${valore}`)
+            }
+        }, 3000)
+    })
+}
+
+lanciaDado()
+    .then(messaggio => console.log(messaggio))
+    .catch(error => console.error(error))
