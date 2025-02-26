@@ -57,3 +57,64 @@ function lanciaDado() {
 lanciaDado()
     .then(messaggio => console.log(messaggio))
     .catch(error => console.error(error))
+
+//Bonus: HOF con closure per memorizzare l'ultimo lancio
+function creaLanciaDado() {
+    let valori = []
+
+    return function () {
+        return new Promise((resolve, reject) => {
+            console.log("Sto lanciando il dado...")
+            setTimeout(() => {
+                const valore = Math.floor(Math.random() * 6) + 1
+                if (valori.includes(valore)) {
+                    reject("Incredibile!")
+                } else {
+                    valori.push(valore)
+                    resolve(`E' uscito ${valore}`)
+                }
+            }, 3000)
+        })
+    }
+}
+
+const lanciaDado = creaLanciaDado()
+lanciaDado()
+    .then(messaggio => {
+        console.log(messaggio)
+        return lanciaDado()
+    })
+    .then(messaggio => {
+        console.log(messaggio)
+        return lanciaDado()
+    })
+    .then(messaggio => {
+        console.log(messaggio)
+    })
+    .catch(error => console.error(error))
+
+//con setInterval
+function creaLanciaDado() {
+    let valori = []
+
+    return function () {
+        return new Promise((resolve, reject) => {
+            console.log("Sto lanciando il dado...")
+            const intervalloId = setInterval(() => {
+                const valore = Math.floor(Math.random() * 6) + 1
+                if (valori.includes(valore)) {
+                    resolve(`Incredibile! è uscito di nuovo ${valore}`)
+                    clearInterval(intervalloId)
+                } else {
+                    valori.push(valore)
+                    console.log(`E' uscito ${valore}`)
+                }
+            }, 3000)
+        })
+    }
+}
+
+const lanciaDado = creaLanciaDado()
+lanciaDado()
+    .then(messaggio => console.log(messaggio))
+    .catch(error => console.error(error))
