@@ -22,8 +22,11 @@ function getPost(id) {
                 fetch(`https://dummyjson.com/users/${post.userId}`)
                     .then(response => response.json())
                     .then(user => {
-                        post.user = user
-                        resolve(post)
+                        const result = {
+                            ...post,
+                            user
+                        }
+                        resolve(result)
                     })
                     .catch(reject)
             })
@@ -60,18 +63,23 @@ lanciaDado()
 
 //Bonus: HOF con closure per memorizzare l'ultimo lancio
 function creaLanciaDado() {
-    let valori = []
+
+    let ultimoLancio = null
 
     return function () {
         return new Promise((resolve, reject) => {
             console.log("Sto lanciando il dado...")
             setTimeout(() => {
-                const valore = Math.floor(Math.random() * 6) + 1
-                if (valori.includes(valore)) {
-                    reject("Incredibile!")
+                if (Math.random() < 0.2) {
+                    ultimoLancio === null
+                    reject("Il dado si è incastrato")
                 } else {
-                    valori.push(valore)
-                    resolve(`E' uscito ${valore}`)
+                    const valore = Math.floor(Math.random() * 6) + 1
+                    if (valore === ultimoLancio) {
+                        console.log("Incredibile!")
+                    }
+                    ultimoLancio = valore
+                    resolve(valore)
                 }
             }, 3000)
         })
@@ -80,21 +88,19 @@ function creaLanciaDado() {
 
 const lanciaDado = creaLanciaDado()
 lanciaDado()
-    .then(messaggio => {
-        console.log(messaggio)
-        return lanciaDado()
-    })
-    .then(messaggio => {
-        console.log(messaggio)
-        return lanciaDado()
-    })
-    .then(messaggio => {
-        console.log(messaggio)
+    .then(risultato => {
+        console.log(`E' uscito ${risultato}`)
+        lanciaDado()
+            .then(risultato => {
+                console.log(`E' uscito ${risultato}`)
+            })
+            .catch(error => console.error(error))
     })
     .catch(error => console.error(error))
 
 //con setInterval
 function creaLanciaDado() {
+
     let valori = []
 
     return function () {
